@@ -146,13 +146,6 @@ return {
           require("plugins.cmp-npm")
         end,
       },
-      {
-        "zbirenbaum/copilot-cmp",
-        disable = not EcoVim.plugins.copilot.enabled,
-        config = function()
-          require("copilot_cmp").setup()
-        end,
-      },
     },
   },
 
@@ -432,24 +425,7 @@ return {
       require("plugins.colorizer")
     end,
   },
-  {
-    "zbirenbaum/copilot.lua",
-    disable = not EcoVim.plugins.copilot.enabled,
-    event = "InsertEnter",
-    config = true,
-  },
-  {
-    "jackMort/ChatGPT.nvim",
-    config = function()
-      require("plugins.chat-gpt")
-    end,
-    cmd = {
-      "ChatGPT",
-      "ChatGPTEditWithInstructions",
-    },
-  },
-
-  -- Git
+   -- Git
   {
     "lewis6991/gitsigns.nvim",
     event = "BufReadPre",
