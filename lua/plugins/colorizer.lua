@@ -6,10 +6,11 @@ require 'colorizer'.setup({
     'typescript',
     'typescriptreact',
     'javascriptreact',
-    'lua'
+    'lua',
+    'python',
   },
   user_default_options = {
     mode = "background",
-    tailwind = false, -- Enable tailwind colors
+    tailwind = true, -- Enable tailwind colors
   }
 })

@@ -122,7 +122,14 @@ lspconfig.vuels.setup({
   init_options = require("lsp.servers.vuels").init_options,
   on_attach = on_attach,
 })
-
+lspconfig.pylsp.setup({
+    on_attach = on_attach,
+    settings = require("lsp.servers.python").settings,
+    flags = {
+      debounce_text_changes = 200,
+    },
+    capabilities = capabilities,
+  })
 for _, server in ipairs({ "bashls", "emmet_ls", "graphql", "html", "volar", "prismals" }) do
   lspconfig[server].setup({
     on_attach = on_attach,

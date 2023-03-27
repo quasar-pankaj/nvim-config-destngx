@@ -1,6 +1,24 @@
 local keymap = vim.keymap.set
 local silent = { silent = true }
 
+-- Save key strokes (now we do not need to press shift to enter command mode).
+keymap({ "n", "x" }, ";", ":")
+
+-- Turn the word under cursor to upper case
+keymap("i", "<c-u>", "<Esc>viwUea")
+
+-- Turn the current word into title case
+keymap("i", "<c-t>", "<Esc>b~lea")
+
+-- Shortcut for faster save and quit
+keymap("n", "<leader>w", "<cmd>update<cr>", { silent = true, desc = "save buffer" })
+
+-- Saves the file if modified and quit
+keymap("n", "<leader>q", "<cmd>x<cr>", { silent = true, desc = "quit current window" })
+
+-- Quit all opened buffers
+keymap("n", "<leader>Q", "<cmd>qa!<cr>", { silent = true, desc = "quit nvim" })
+
 -- Better window movement
 keymap("n", "<C-h>", "<C-w>h", silent)
 keymap("n", "<C-j>", "<C-w>j", silent)
@@ -9,6 +27,22 @@ keymap("n", "<C-l>", "<C-w>l", silent)
 
 -- H to move to the first non-blank character of the line
 keymap("n", "H", "^", silent)
+keymap("n", "L", "g_", silent)
+-- Go to the beginning and end of current line in insert mode quickly
+keymap("i", "<C-A>", "<HOME>")
+keymap("i", "<C-E>", "<END>")
+-- Go to beginning of command in command-line mode
+keymap("c", "<C-A>", "<HOME>")
+-- Do not move my cursor when joining lines.
+keymap("n", "J", "", {
+  desc = "join line",
+  callback = function()
+    vim.cmd([[
+      normal! mzJ`z
+      delmarks z
+    ]])
+  end,
+})
 
 -- Move selected line / block of text in visual mode
 keymap("x", "K", ":move '<-2<CR>gv-gv", silent)
@@ -85,7 +119,7 @@ keymap("n", "<Space>,", ":cp<CR>", silent)
 keymap("n", "<Space>.", ":cn<CR>", silent)
 
 -- Toggle quicklist
-keymap("n", "<leader>q", "<cmd>lua require('utils').toggle_quicklist()<CR>", silent)
+-- keymap("n", "<leader>q", "<cmd>lua require('utils').toggle_quicklist()<CR>", silent)
 
 -- Manually invoke speeddating in case switch.vim didn't work
 keymap("n", "<C-a>", ":if !switch#Switch() <bar> call speeddating#increment(v:count1) <bar> endif<CR>", silent)
@@ -114,7 +148,7 @@ keymap("n", "<leader>cf", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", s
 keymap("v", "<leader>cf", "<cmd>'<.'>lua vim.lsp.buf.range_formatting()<CR>", silent)
 keymap("n", "<leader>cl", "<cmd>lua vim.diagnostic.open_float({ border = 'rounded', max_width = 100 })<CR>", silent)
 keymap("n", "gl", "<cmd>lua vim.diagnostic.open_float({ border = 'rounded', max_width = 100 })<CR>", silent)
-keymap("n", "L", "<cmd>lua vim.lsp.buf.signature_help()<CR>", silent)
+keymap("n", "cL", "<cmd>lua vim.lsp.buf.signature_help()<CR>", silent)
 keymap("n", "]g", "<cmd>lua vim.diagnostic.goto_next({ float = { border = 'rounded', max_width = 100 }})<CR>", silent)
 keymap("n", "[g", "<cmd>lua vim.diagnostic.goto_prev({ float = { border = 'rounded', max_width = 100 }})<CR>", silent)
 keymap("n", "K", function()

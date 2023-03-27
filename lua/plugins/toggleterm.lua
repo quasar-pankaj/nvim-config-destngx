@@ -7,7 +7,7 @@ require("toggleterm").setup {
       return vim.o.columns * 0.4
     end
   end,
-  open_mapping = [[<F12>]],
+  open_mapping = [[<C - `>]],
   ---@diagnostic disable-next-line: unused-local
   on_open = function(term)
     require('shade').toggle();
