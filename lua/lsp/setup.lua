@@ -29,6 +29,10 @@ mason_lsp.setup({
     "tsserver",
     "volar",
     "prismals",
+    "pylsp",
+    "dockerls",
+    "docker_compose_language_service",
+
   },
   -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed.
   -- This setting has no relation with the `ensure_installed` setting.
