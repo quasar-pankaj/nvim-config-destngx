@@ -28,6 +28,9 @@ mason_lsp.setup({
     "tailwindcss",
     "tsserver",
     "volar",
+    "pylsp",
+    "dockerls",
+    "docker_compose_language_service",
   },
   -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed.
   -- This setting has no relation with the `ensure_installed` setting.
@@ -42,16 +45,22 @@ mason_lsp.setup({
 local lspconfig = require("lspconfig")
 
 local handlers = {
-      ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = EcoVim.ui.float.border }),
+      ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+          silent = true,
+          border = EcoVim.ui.float.border,
+        }),
       ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = EcoVim.ui.float.border }),
       ["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics,
     { virtual_text = EcoVim.lsp.virtual_text }
   ),
 }
-
+local navic = require("nvim-navic")
 local function on_attach(client, bufnr)
   -- set up buffer keymaps, etc.
+  if client.server_capabilities.documentSymbolProvider then
+        navic.attach(client, bufnr)
+  end
 end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -119,7 +128,8 @@ lspconfig.vuels.setup({
   filetypes = require("lsp.servers.vuels").filetypes,
   handlers = handlers,
   init_options = require("lsp.servers.vuels").init_options,
-  on_attach = on_attach,
+  on_attach = require("lsp.servers.vuels").on_attach,
+  settings = require("lsp.servers.vuels").settings,
 })
 lspconfig.pylsp.setup({
     on_attach = on_attach,
@@ -129,7 +139,7 @@ lspconfig.pylsp.setup({
     },
     capabilities = capabilities,
   })
-for _, server in ipairs({ "bashls", "emmet_ls", "graphql", "html", "volar" }) do
+for _, server in ipairs({ "bashls", "emmet_ls", "graphql", "html" }) do
   lspconfig[server].setup({
     on_attach = on_attach,
     capabilities = capabilities,

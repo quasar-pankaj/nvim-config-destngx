@@ -93,14 +93,14 @@ local normal_mode_mappings = {
   ['9'] = 'which_key_ignore',
 
   -- single
-  ['='] = { '<cmd>vertical resize +5<CR>',               'resize +5' },
-  ['-'] = { '<cmd>vertical resize -5<CR>',               'resize +5' },
-  ['v'] = { '<C-W>v',                                    'split right' },
-  ['V'] = { '<C-W>s',                                    'split below' },
+  ['='] = { '<cmd>vertical resize +5<CR>',                      'resize +5' },
+  ['-'] = { '<cmd>vertical resize -5<CR>',                      'resize +5' },
+  ['v'] = { '<C-W>v',                                           'split right' },
+  ['V'] = { '<C-W>s',                                           'split below' },
   ['q'] = { 'quicklist' },
 
   ['/'] = {
-    name = 'Ecovim',
+    name = 'Extras',
     ['/'] = { '<cmd>Alpha<CR>',                                 'open dashboard' },
     c = { '<cmd>e $MYVIMRC<CR>',                                'open config' },
     i = { '<cmd>Lazy<CR>',                                      'manage plugins' },
@@ -118,21 +118,28 @@ local normal_mode_mappings = {
   a = {
     name = 'Actions',
     c = { 'comment box' },
-    n = { '<cmd>set nonumber!<CR>',                      'line numbers' },
-    r = { '<cmd>set norelativenumber!<CR>',              'relative number' },
-    t = { '<cmd>ToggleTerm direction=float<CR>',         'terminal float' },
+    n = { '<cmd>set nonumber!<CR>',                             'line numbers' },
+    r = { '<cmd>set norelativenumber!<CR>',                     'relative number' },
+    t = { '<cmd>ToggleTerm direction=float<CR>',                'terminal float' },
   },
 
   b = {
     name = 'Buffer',
     b = { '<cmd>BufferMovePrevious<CR>',                 'Move back' },
-    c = { '<cmd>BufferCloseAllButCurrent<CR>',           'Close but current' },
+    c = { 'lua require("utils").closeOtherBuffers()',           'Close but current' },
     d = { '<cmd>BufferOrderByDirectory<CR>',             'Order by directory' },
     f = { '<cmd>bfirst<CR>',                             'First buffer' },
     l = { '<cmd>BufferCloseBuffersLeft<CR>',             'Close Left' },
     r = { '<cmd>BufferCloseBuffersRight<CR>',            'Close Right' },
     n = { '<cmd>BufferMoveNext<CR>',                     'Move next' },
     p = { '<cmd>BufferPick<CR>',                         'Pick Buffer' },
+    P = { '<cmd>BufferLineTogglePin<CR>',                       'Pin/Unpin Buffer' },
+    s = {
+      name = 'Sort',
+      d = { '<cmd>BufferLineSortByDirectory<CR>',               'Sort by directory' },
+      e = { '<cmd>BufferLineSortByExtension<CR>',               'Sort by extension' },
+      r = { '<cmd>BufferLineSortByRelativeDirectory<CR>',       'Sort by relative dir' },
+    },
   },
 
   c = {
@@ -152,14 +159,18 @@ local normal_mode_mappings = {
     a = { 'attach' },
     b = { 'breakpoint' },
     c = { 'continue' },
+    C = { 'close UI' },
     d = { 'continue' },
     h = { 'visual hover' },
     i = { 'step into' },
     o = { 'step over' },
     O = { 'step out' },
+    r = { 'repl' },
+    s = { 'scopes' },
     t = { 'terminate' },
     v = { 'log variable' },
     V = { 'log variable above' },
+    w = { 'watches' },
   },
 
   g = {
@@ -210,7 +221,8 @@ local normal_mode_mappings = {
     name = 'Project',
     f = { 'file' },
     w = { 'word' },
-    l = { "<cmd>lua require'telescope'.extensions.repo.cached_list{file_ignore_patterns={'/%.cache/', '/%.cargo/', '/%.local/', '/%timeshift/', '/usr/', '/srv/', '/%.oh%-my%-zsh', '/Library/', '/%.cocoapods/'}}<CR>", 'list' },
+    l = { "<cmd>lua require'telescope'.extensions.repo.cached_list{file_ignore_patterns={'/%.cache/', '/%.cargo/', '/%.local/', '/%timeshift/', '/usr/', '/srv/', '/%.oh%-my%-zsh', '/Library/', '/%.cocoapods/'}}<CR>", 'recently list' },
+    a = { "<cmd>lua require'telescope'.extensions.repo.list{}<CR>", 'all in local' },
     r = { 'refactor' },
     s = { "<cmd>SessionManager save_current_session<CR>",            'save session' },
     t = { "<cmd>TodoTrouble<CR>",                                    'todo' },
@@ -294,6 +306,7 @@ local function attach_typescript(bufnr)
   wk.register({
     c = {
       name = "LSP",
+      e = { '<cmd>TSC<CR>',                                'workspace errors (TSC)' },
       F = { '<cmd>TypescriptFixAll<CR>',                   'fix all' },
       i = { '<cmd>TypescriptAddMissingImports<CR>',        'import all'},
       o = { '<cmd>TypescriptOrganizeImports<CR>',          'organize imports'},
@@ -381,6 +394,20 @@ local function attach_spectre(bufnr)
   })
 end
 
+local function attach_nvim_tree(bufnr)
+  wk.register({
+    ["="] = { "<cmd>NvimTreeResize +5<CR>", "resize +5" },
+    ["-"] = { "<cmd>NvimTreeResize -5<CR>", "resize +5" },
+  }, {
+    buffer = bufnr,
+    mode = "n",   -- NORMAL mode
+    prefix = "<leader>",
+    silent = true, -- use `silent` when creating keymaps
+    noremap = true, -- use `noremap` when creating keymaps
+    nowait = false, -- use `nowait` when creating keymaps
+  })
+end
+
 return {
   attach_markdown = attach_markdown,
   attach_typescript = attach_typescript,
@@ -388,4 +415,5 @@ return {
   attach_zen = attach_zen,
   attach_jest = attach_jest,
   attach_spectre = attach_spectre,
+  attach_nvim_tree = attach_nvim_tree,
 }

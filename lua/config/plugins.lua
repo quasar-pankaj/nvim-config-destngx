@@ -1,4 +1,16 @@
 return {
+  -- AI
+  {
+    "jcdickinson/codeium.nvim",
+    cond = EcoVim.plugins.ai.codeium.enabled,
+    event = "InsertEnter",
+    cmd = "Codeium",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+    },
+    config = true,
+  },
   -- Themes
   {
     "folke/tokyonight.nvim",
@@ -10,13 +22,50 @@ return {
       require("config.colorscheme")
     end,
   },
-
+  {
+    "folke/noice.nvim",
+    cond = EcoVim.plugins.experimental_noice.enabled,
+    lazy = false,
+    config = function()
+      require("plugins.noice")
+    end,
+  },
+  {
+    "chrisgrieser/nvim-spider",
+    cond = EcoVim.plugins.jump_by_subwords.enabled,
+    lazy = true,
+    keys = { "w", "e", "b", "ge" },
+    config = function()
+      vim.keymap.set({ "n", "o", "x" }, "W", "w", { desc = "Normal w" })
+      vim.keymap.set({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>", { desc = "Spider-w" })
+      vim.keymap.set({ "n", "o", "x" }, "e", "<cmd>lua require('spider').motion('e')<CR>", { desc = "Spider-e" })
+      vim.keymap.set({ "n", "o", "x" }, "b", "<cmd>lua require('spider').motion('b')<CR>", { desc = "Spider-b" })
+      vim.keymap.set(
+        { "n", "o", "x" },
+        "ge",
+        "<cmd>lua require('spider').motion('ge')<CR>",
+        { desc = "Spider-ge" }
+      )
+    end,
+  },
+  {
+    "SmiteshP/nvim-navic",
+    config = function()
+      require("plugins.navic")
+    end,
+    dependencies = "neovim/nvim-lspconfig",
+  },
   { "nvim-lua/plenary.nvim" },
   {
     "nvim-tree/nvim-web-devicons",
     config = function()
       require("nvim-web-devicons").setup({ default = true })
     end,
+  },
+  {
+    'yamatsum/nvim-nonicons',
+    lazy = false,
+    requires = { 'nvim-tree/nvim-web-devicons' }
   },
   {
     "goolord/alpha-nvim",
@@ -49,6 +98,17 @@ return {
   },
 
   -- Navigating (Telescope/Tree/Refactor)
+  {
+    "Pocco81/auto-save.nvim",
+    lazy = false,
+    config = function()
+      require("auto-save").setup {
+        enabled = true,
+        -- your config goes here
+        -- or just leave it empty :)
+      }
+    end,
+  },
   -- better escape
   {
     "max397574/better-escape.nvim",
@@ -73,6 +133,13 @@ return {
   },
   {
     "nvim-tree/nvim-tree.lua",
+    cmd = {
+      "NvimTreeOpen",
+      "NvimTreeClose",
+      "NvimTreeToggle",
+      "NvimTreeFindFile",
+      "NvimTreeFindFileToggle",
+    },
     keys = {
       { "<C-e>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>", desc = "NvimTree" },
     },
@@ -138,8 +205,12 @@ return {
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-calc",
       "saadparwaiz1/cmp_luasnip",
-      { "L3MON4D3/LuaSnip",    dependencies = "rafamadriz/friendly-snippets" },
-      { "tzachar/cmp-tabnine", build = "./install.sh" },
+      { "L3MON4D3/LuaSnip", dependencies = "rafamadriz/friendly-snippets" },
+      {
+        cond = EcoVim.plugins.ai.tabnine.enabled,
+        "tzachar/cmp-tabnine",
+        build = "./install.sh"
+      },
       {
         "David-Kunz/cmp-npm",
         config = function()
@@ -167,13 +238,6 @@ return {
     end,
   },
   { "nvim-lua/popup.nvim" },
-  {
-    "ChristianChiarulli/nvim-gps",
-    branch = "text_hl",
-    config = function()
-      require("plugins.gps")
-    end,
-  },
   { "jose-elias-alvarez/typescript.nvim" },
   {
     "axelvc/template-string.nvim",
@@ -194,23 +258,54 @@ return {
     end,
   },
   -- Python indent (follows the PEP8 style)
-  { "Vimjas/vim-python-pep8-indent",     ft = { "python" } },
+  { "Vimjas/vim-python-pep8-indent",   ft = { "python" } },
   -- Python-related text object
-  { "jeetsukumaran/vim-pythonsense",     ft = { "python" } },
-  { "machakann/vim-swap",                event = "VimEnter" },
+  { "jeetsukumaran/vim-pythonsense",   ft = { "python" } },
+  { "machakann/vim-swap",              event = "VimEnter" },
   -- Add indent object for vim (useful for languages like Python)
-  { "michaeljsmith/vim-indent-object",   event = "VimEnter" },
+  { "michaeljsmith/vim-indent-object", event = "VimEnter" },
+  {
+    "dmmulroy/tsc.nvim",
+    cmd = { "TSC" },
+    config = true,
+  },
+  {
+    "dnlhc/glance.nvim",
+    config = true,
+    opts = {
+      hooks = {
+        before_open = function(results, open, jump, method)
+          if #results == 1 then
+            jump(results[1]) -- argument is optional
+          else
+            open(results)    -- argument is optional
+          end
+        end,
+      },
+    },
+    cmd = { "Glance" },
+    keys = {
+      { "gd", "<cmd>Glance definitions<CR>",      desc = "LSP Definition" },
+      { "gr", "<cmd>Glance references<CR>",       desc = "LSP References" },
+      { "gm", "<cmd>Glance implementations<CR>",  desc = "LSP Implementations" },
+      { "gy", "<cmd>Glance type_definitions<CR>", desc = "LSP Type Definitions" },
+    },
+  },
   -- General
-  { "AndrewRadev/switch.vim",            lazy = false },
+  { "AndrewRadev/switch.vim",      lazy = false },
   -- { "AndrewRadev/splitjoin.vim", lazy = false },
   {
     "Wansmer/treesj",
     lazy = true,
     cmd = { "TSJToggle", "TSJSplit", "TSJJoin" },
     keys = {
-      { "gJ", "<cmd>TSJToggle<CR>", desc = "Trigger Toggle Split/Join" },
+      { "gJ", "<cmd>TSJToggle<CR>", desc = "Toggle Split/Join" },
     },
-    config = true,
+    config = function()
+      require("treesj").setup({
+        use_default_keymaps = false,
+      })
+    end,
   },
   {
     "numToStr/Comment.nvim",
@@ -229,9 +324,9 @@ return {
       require("plugins.toggleterm")
     end,
   },
-  { "tpope/vim-repeat",            lazy = false },
-  { "tpope/vim-speeddating",       lazy = false },
-  { "dhruvasagar/vim-table-mode",  ft = { "markdown" } },
+  { "tpope/vim-repeat",           lazy = false },
+  { "tpope/vim-speeddating",      lazy = false },
+  { "dhruvasagar/vim-table-mode", ft = { "markdown" } },
   {
     "mg979/vim-visual-multi",
     keys = {
@@ -268,12 +363,12 @@ return {
     config = function()
       require("plugins.zen")
     end,
-    disable = not EcoVim.plugins.zen.enabled,
+    cond = EcoVim.plugins.zen.enabled,
   },
   {
     "folke/twilight.nvim",
     config = true,
-    disable = not EcoVim.plugins.zen.enabled,
+    cond = EcoVim.plugins.zen.enabled,
   },
   {
     "ggandor/lightspeed.nvim",
@@ -297,12 +392,25 @@ return {
     end,
     event = "VeryLazy",
   },
-  {"echasnovski/mini.bufremove",
-		version = "*",
-		config = function()
-			require("mini.bufremove").setup({
-				silent = true,
-			})
+  {
+    "echasnovski/mini.bufremove",
+    version = "*",
+    config = function()
+      require("mini.bufremove").setup({
+        silent = true,
+      })
+    end,
+  },
+  {
+    "akinsho/bufferline.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      'yamatsum/nvim-nonicons',
+      "echasnovski/mini.bufremove",
+    },
+    version = "*",
+    config = function()
+      require("plugins.bufferline")
     end,
   },
   {
@@ -321,9 +429,7 @@ return {
   {
     "rcarriga/nvim-notify",
     config = function()
-      require("notify").setup({
-        background_colour = "#000000",
-      })
+      require("plugins.nvim-notify")
     end,
     init = function()
       local banned_messages = {
@@ -337,7 +443,7 @@ return {
             return
           end
         end
-        require("notify")(msg, ...)
+        return require("notify")(msg, ...)
       end
     end,
   },
@@ -357,13 +463,6 @@ return {
     ft = { "markdown" },
   },
   {
-    "declancm/cinnamon.nvim",
-    disable = true,
-    config = function()
-      require("plugins.cinnamon")
-    end,
-  },
-  {
     "airblade/vim-rooter",
     setup = function()
       vim.g.rooter_patterns = EcoVim.plugins.rooter.patterns
@@ -376,7 +475,11 @@ return {
       require("plugins.session-manager")
     end,
   },
-  { "kylechui/nvim-surround",         lazy = false, config = true },
+  {
+    "kylechui/nvim-surround",
+    lazy = false,
+    config = true
+  },
   {
     "sunjon/shade.nvim",
     config = function()
@@ -436,12 +539,6 @@ return {
     config = function()
       require("plugins.colorizer")
     end,
-  },
-  {
-    "zbirenbaum/copilot.lua",
-    disable = not EcoVim.plugins.copilot.enabled,
-    event = "InsertEnter",
-    config = true,
   },
   -- Git
   {
@@ -540,6 +637,20 @@ return {
     dependencies = {
       "theHamsta/nvim-dap-virtual-text",
       "rcarriga/nvim-dap-ui",
+      "mxsdev/nvim-dap-vscode-js",
     },
+  },
+  {
+    "LiadOz/nvim-dap-repl-highlights",
+    config = true,
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    build = function()
+      if not require("nvim-treesitter.parsers").has_parser("dap_repl") then
+        vim.cmd(":TSInstall dap_repl")
+      end
+    end,
   },
 }

@@ -19,15 +19,19 @@ keymap("n", "<leader>q", "<cmd>x<cr>", { silent = true, desc = "quit current win
 -- Quit all opened buffers
 keymap("n", "<leader>Q", "<cmd>qa!<cr>", { silent = true, desc = "quit nvim" })
 
+-- Paste non-linewise text above or below current line, see https://stackoverflow.com/a/1346777/6064933
+keymap("n", "<leader>P", "m`o<ESC>p``", { desc = "paste below current line" })
+-- keymap("n", "<leader>P", "m`O<ESC>p``", { desc = "paste above current line" })
+
 -- Better window movement
 keymap("n", "<C-h>", "<C-w>h", silent)
 keymap("n", "<C-j>", "<C-w>j", silent)
 keymap("n", "<C-k>", "<C-w>k", silent)
 keymap("n", "<C-l>", "<C-w>l", silent)
 
--- H to move to the first non-blank character of the line
-keymap("n", "H", "^", silent)
-keymap("n", "L", "g_", silent)
+---- Go to start or end of line easier
+keymap({ "n", "x" }, "H", "^")
+keymap({ "n", "x" }, "L", "g_")
 -- Go to the beginning and end of current line in insert mode quickly
 keymap("i", "<C-A>", "<HOME>")
 keymap("i", "<C-E>", "<END>")
@@ -45,8 +49,14 @@ keymap("n", "J", "", {
 })
 
 -- Move selected line / block of text in visual mode
-keymap("x", "K", ":move '<-2<CR>gv-gv", silent)
 keymap("x", "J", ":move '>+1<CR>gv-gv", silent)
+keymap("x", "K", ":move '<-2<CR>gv-gv", silent)
+
+-- Always use very magic mode for searching
+keymap("n", "/", [[/\v]])
+
+-- insert semicolon in the end
+keymap("i", "<A-;>", "<Esc>miA;<Esc>`ii")
 
 -- Keep visual mode indenting
 keymap("v", "<", "<gv", silent)
@@ -73,32 +83,31 @@ keymap("n", "<Leader>pf",
 keymap("n", "<Leader>pw", "<CMD>lua require('telescope.builtin').grep_string({ initial_mode = 'normal' })<CR>")
 
 -- Buffers
-keymap("n", "<Tab>", ":BufferNext<CR>", silent)
+keymap("n", "<Tab>", ":BufferLineCycleNext<CR>", silent)
 keymap("n", "gn", ":bn<CR>", silent)
-keymap("n", "<S-Tab>", ":BufferPrevious<CR>", silent)
+keymap("n", "<S-Tab>", ":BufferLineCyclePrev<CR>", silent)
 keymap("n", "gp", ":bp<CR>", silent)
-keymap("n", "<S-q>", ":BufferClose<CR>", silent)
+keymap("n", "<S-q>", ":lua require('mini.bufremove').delete(0, false)<CR>", silent)
 
 -- Move between barbar buffers
-keymap("n", "<Space>1", ":BufferGoto 1<CR>", silent)
-keymap("n", "<Space>2", ":BufferGoto 2<CR>", silent)
-keymap("n", "<Space>3", ":BufferGoto 3<CR>", silent)
-keymap("n", "<Space>4", ":BufferGoto 4<CR>", silent)
-keymap("n", "<Space>5", ":BufferGoto 5<CR>", silent)
-keymap("n", "<Space>6", ":BufferGoto 6<CR>", silent)
-keymap("n", "<Space>7", ":BufferGoto 7<CR>", silent)
-keymap("n", "<Space>8", ":BufferGoto 8<CR>", silent)
-keymap("n", "<Space>9", ":BufferGoto 9<CR>", silent)
-keymap("n", "<A-1>", ":BufferGoto 1<CR>", silent)
-keymap("n", "<A-2>", ":BufferGoto 2<CR>", silent)
-keymap("n", "<A-3>", ":BufferGoto 3<CR>", silent)
-keymap("n", "<A-4>", ":BufferGoto 4<CR>", silent)
-keymap("n", "<A-5>", ":BufferGoto 5<CR>", silent)
-keymap("n", "<A-6>", ":BufferGoto 6<CR>", silent)
-keymap("n", "<A-7>", ":BufferGoto 7<CR>", silent)
-keymap("n", "<A-8>", ":BufferGoto 8<CR>", silent)
-keymap("n", "<A-9>", ":BufferGoto 9<CR>", silent)
-
+keymap("n", "<Space>1", ":BufferLineGoToBuffer 1<CR>", silent)
+keymap("n", "<Space>2", ":BufferLineGoToBuffer 2<CR>", silent)
+keymap("n", "<Space>3", ":BufferLineGoToBuffer 3<CR>", silent)
+keymap("n", "<Space>4", ":BufferLineGoToBuffer 4<CR>", silent)
+keymap("n", "<Space>5", ":BufferLineGoToBuffer 5<CR>", silent)
+keymap("n", "<Space>6", ":BufferLineGoToBuffer 6<CR>", silent)
+keymap("n", "<Space>7", ":BufferLineGoToBuffer 7<CR>", silent)
+keymap("n", "<Space>8", ":BufferLineGoToBuffer 8<CR>", silent)
+keymap("n", "<Space>9", ":BufferLineGoToBuffer 9<CR>", silent)
+keymap("n", "<A-1>", ":BufferLineGoToBuffer 1<CR>", silent)
+keymap("n", "<A-2>", ":BufferLineGoToBuffer 2<CR>", silent)
+keymap("n", "<A-3>", ":BufferLineGoToBuffer 3<CR>", silent)
+keymap("n", "<A-4>", ":BufferLineGoToBuffer 4<CR>", silent)
+keymap("n", "<A-5>", ":BufferLineGoToBuffer 5<CR>", silent)
+keymap("n", "<A-6>", ":BufferLineGoToBuffer 6<CR>", silent)
+keymap("n", "<A-7>", ":BufferLineGoToBuffer 7<CR>", silent)
+keymap("n", "<A-8>", ":BufferLineGoToBuffer 8<CR>", silent)
+keymap("n", "<A-9>", ":BufferLineGoToBuffer 9<CR>", silent)
 -- Don't yank on delete char
 keymap("n", "x", '"_x', silent)
 keymap("n", "X", '"_X', silent)
@@ -108,11 +117,14 @@ keymap("v", "X", '"_X', silent)
 -- Don't yank on visual paste
 keymap("v", "p", '"_dP', silent)
 
+-- Copy entire buffer.
+keymap("n", "<leader>y", "<cmd>%yank<cr>", { desc = "yank entire buffer" })
+
 -- Avoid issues because of remapping <c-a> and <c-x> below
-vim.cmd [[
+vim.cmd([[
   nnoremap <Plug>SpeedDatingFallbackUp <c-a>
   nnoremap <Plug>SpeedDatingFallbackDown <c-x>
-]]
+]])
 
 -- Quickfix
 keymap("n", "<Space>,", ":cp<CR>", silent)
@@ -138,14 +150,25 @@ keymap("n", "<Leader>pr", "<cmd>lua require('spectre').open_visual({select_word=
 keymap("v", "<Leader>pr", "<cmd>lua require('spectre').open_visual()<CR>")
 
 -- LSP
-keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", silent)
-keymap("n", "gr", "<cmd>lua vim.lsp.buf.references({ includeDeclaration = false })<CR>", silent)
+-- keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", silent)
+-- keymap("n", "gr", "<cmd>lua vim.lsp.buf.references({ includeDeclaration = false })<CR>", silent)
 keymap("n", "<C-Space>", "<cmd>lua vim.lsp.buf.code_action()<CR>", silent)
 keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", silent)
 keymap("v", "<leader>ca", "<cmd>'<,'>lua vim.lsp.buf.code_action()<CR>", silent)
 keymap("n", "<leader>cr", "<cmd>lua vim.lsp.buf.rename()<CR>", silent)
 keymap("n", "<leader>cf", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", silent)
-keymap("v", "<leader>cf", "<cmd>'<.'>lua vim.lsp.buf.range_formatting()<CR>", silent)
+keymap("v", "<leader>cf", function()
+  local start_row, _ = table.unpack(vim.api.nvim_buf_get_mark(0, "<"))
+  local end_row, _ = table.unpack(vim.api.nvim_buf_get_mark(0, ">"))
+
+  vim.lsp.buf.format({
+    range = {
+      ["start"] = { start_row, 0 },
+      ["end"] = { end_row, 0 },
+    },
+    async = true,
+  })
+end, silent)
 keymap("n", "<leader>cl", "<cmd>lua vim.diagnostic.open_float({ border = 'rounded', max_width = 100 })<CR>", silent)
 keymap("n", "gl", "<cmd>lua vim.diagnostic.open_float({ border = 'rounded', max_width = 100 })<CR>", silent)
 keymap("n", "cL", "<cmd>lua vim.lsp.buf.signature_help()<CR>", silent)
