@@ -2,7 +2,6 @@
 -- local nvim_tree_events = require("nvim-tree.events")
 -- local bufferline_api = require("bufferline.api")
 --
-local TREE_WIDTH = 40
 
 local git_icons = {
   unstaged = "",
@@ -13,7 +12,6 @@ local git_icons = {
   deleted = "",
   ignored = "◌",
 }
-local utils = require("utils")
 local api = require("nvim-tree.api")
 local TREE_WIDTH = 40
 
