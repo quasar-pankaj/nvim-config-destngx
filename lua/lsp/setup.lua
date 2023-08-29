@@ -25,7 +25,6 @@ mason_lsp.setup({
     "jsonls",
     "lua_ls",
     "tailwindcss",
-    "tsserver",
     "volar",
     "pylsp",
     "dockerls",
@@ -123,7 +122,7 @@ lspconfig.pylsp.setup({
     },
     capabilities = capabilities,
   })
-for _, server in ipairs({ "bashls", "emmet_ls", "graphql", "html", "tsserver" }) do
+for _, server in ipairs({ "bashls", "emmet_ls", "graphql", "html" }) do
   lspconfig[server].setup({
     on_attach = on_attach,
     capabilities = capabilities,
@@ -135,3 +134,4 @@ require("ufo").setup({
   fold_virt_text_handler = ufo_config_handler,
   close_fold_kinds = { "imports" },
 })
+
