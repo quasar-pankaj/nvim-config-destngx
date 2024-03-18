@@ -102,6 +102,8 @@ local normal_mode_mappings = {
 
   ['/'] = {
     name = 'Extras',
+    n = { '<cmd>set nonumber!<CR>', 'line numbers' },
+    r = { '<cmd>set norelativenumber!<CR>', 'toggle relative number' },
     ['/'] = { '<cmd>Alpha<CR>', 'open dashboard' },
     c = { '<cmd>e $MYVIMRC<CR>', 'open config' },
     i = { '<cmd>Lazy<CR>', 'manage plugins' },
@@ -112,10 +114,10 @@ local normal_mode_mappings = {
   },
 
   a = {
-    name = 'Actions',
-    n = { '<cmd>set nonumber!<CR>', 'line numbers' },
-    r = { '<cmd>set norelativenumber!<CR>', 'relative number' },
-    t = { "<cmd>ToggleTerm direction=float<CR>","terminal float" }
+    name = 'AI',
+    t = { "<cmd>PrtChatToggle<cr>", "Toggle Popup Chat" },
+    f = { "<cmd>PrtChatFinder<cr>", "Chat Finder" },
+    r = { "<cmd>PrtRewrite<cr>", "Inline Rewrite" },
   },
 
   b = {
@@ -236,8 +238,9 @@ local normal_mode_mappings = {
 
   t = {
     name = 'Table Mode',
-    m = { 'toggle' },
-    t = { 'tableize' },
+    -- m = { 'toggle' },
+    -- t = { 'tableize' },
+    t = { "<cmd>ToggleTerm direction=float<CR>", "terminal float" }
   },
 }
 
