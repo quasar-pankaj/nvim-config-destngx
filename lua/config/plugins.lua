@@ -78,7 +78,7 @@ return {
       )
     end,
   },
-  -- show the current context of file in winbar
+  -- show the current contect of file in winbar
   {
     "SmiteshP/nvim-navic",
     config = function()
@@ -133,6 +133,11 @@ return {
         end,
       },
     },
+  },
+  -- show context of current line
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    lazy = false,
   },
 -- autosave config
   {
