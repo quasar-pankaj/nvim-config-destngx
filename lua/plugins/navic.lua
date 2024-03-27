@@ -6,7 +6,7 @@ vim.api.nvim_set_hl(0, "NavicSeparator", { link = "Comment" })
 navic.setup {
     lsp = {
         auto_attach = true,
-        preference = nil,
+        preference = {"typescript-tools"},
     },
     highlight = true,
     separator = " " .. DestNgxVim.icons.caretRight .. " ",
